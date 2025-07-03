@@ -1,0 +1,65 @@
+{% extends "base.html" %} {% block title %}Register | Local Alpha OS{% endblock
+%} {% block content %}
+<section class="auth-form">
+  <h2>Create Your Account 🧠</h2>
+  <form method="POST" action="/register" id="register-form">
+    <label>Email</label>
+    <input type="email" name="email" placeholder="you@example.com" required />
+
+    <label>Password</label>
+    <input type="password" name="password" placeholder="••••••••" required />
+    <p id="auth-message" class="auth-message"></p>
+
+    <button type="submit" class="btn primary">Register</button>
+    <p class="auth-switch">
+      Already have an account? <a href="/login">Log in</a>
+    </p>
+  </form>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("register-form");
+      const message = document.getElementById("auth-message");
+      if (!form || !message) return;
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const email = this.email.value.trim();
+        const password = this.password.value.trim();
+
+        message.textContent = "";
+        message.className = "auth-message";
+
+        if (!email || !password) {
+          message.textContent = "Please fill in all fields.";
+          message.classList.add("error");
+          return;
+        }
+
+        try {
+          const res = await fetch("/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            message.textContent = data.error || "Registration failed.";
+            message.classList.add("error");
+          } else {
+            message.textContent = data.message || "Account created!";
+            message.classList.add("success");
+            setTimeout(() => (window.location.href = "/login"), 1500);
+          }
+        } catch (err) {
+          console.error(err);
+          message.textContent = "Server error. Please try again.";
+          message.classList.add("error");
+        }
+      });
+    });
+  </script>
+</section>
+{% endblock %}

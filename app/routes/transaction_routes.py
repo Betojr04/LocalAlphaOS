@@ -7,6 +7,7 @@ from datetime import datetime
 transactions = Blueprint("transactions", __name__)
 
 
+# ADDING A TRANSACTION
 @transactions.route("/transactions", methods=["POST"])
 @jwt_required()
 def create_transaction():
@@ -14,16 +15,18 @@ def create_transaction():
     data = request.get_json()
     txn = Transaction(
         user_id=user_id,
-        type="expense",
+        type=data["type"],
         amount=data["amount"],
         category=data["category"],
         note=data.get("note", ""),
     )
+
     db.session.add(txn)
     db.session.commit()
     return jsonify({"message": "Transaction created"}), 201
 
 
+# GETTING ALL TRANSACTIONS
 @transactions.route("/transactions", methods=["GET"])
 @jwt_required()
 def get_transactions():
@@ -49,6 +52,7 @@ def get_transactions():
     return jsonify(result), 200
 
 
+# DELETING SPECIFIC TRANSACTION
 @transactions.route("/transactions/<int:transaction_id>", methods=["DELETE"])
 @jwt_required()
 def delete_transaction(transaction_id):
@@ -64,6 +68,7 @@ def delete_transaction(transaction_id):
     return jsonify({"message": "Transaction deleted"}), 200
 
 
+# UPDATING A SPECIFIC TRANSACTION
 @transactions.route("/transactions/<int:transaction_id>", methods=["PUT"])
 @jwt_required()
 def update_transaction(transaction_id):
@@ -91,6 +96,7 @@ def update_transaction(transaction_id):
     return jsonify({"message": "Transaction updated"}), 200
 
 
+# GET THE EXPENSES TRANSACTIONS
 @transactions.route("/expenses", methods=["GET"])
 @jwt_required()
 def get_expenses():
@@ -115,6 +121,7 @@ def get_expenses():
     return jsonify(result), 200
 
 
+# GET THE INCOME TRANSACTIONS
 @transactions.route("/income", methods=["GET"])
 @jwt_required()
 def get_income():

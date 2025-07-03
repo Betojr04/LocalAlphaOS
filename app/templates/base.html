@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Local Alpha OS{% endblock %}</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/index.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/auth.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="navbar-brand">
+        <a href="/home">Local Alpha OS</a>
+      </div>
+
+      <button id="menu-toggle" class="hamburger">&#9776;</button>
+
+      <nav class="nav-links" id="nav-links">
+        <a href="/home">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/login" id="login-link-desktop">Login</a>
+        <a href="/logout" id="logout-link-desktop" class="hidden">Logout</a>
+      </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-nav" class="mobile-nav hidden">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/login" id="login-link-mobile">Login</a>
+      <a href="/logout" id="logout-link-mobile" class="hidden">Logout</a>
+    </div>
+
+    <main class="content">{% block content %}{% endblock %}</main>
+
+    <footer class="footer">
+      <p>&copy; {{ current_year }} Local Alpha OS</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // === Toggle Mobile Nav ===
+        const menuToggle = document.getElementById("menu-toggle");
+        const mobileNav = document.getElementById("mobile-nav");
+
+        if (menuToggle && mobileNav) {
+          menuToggle.addEventListener("click", () => {
+            mobileNav.classList.toggle("hidden");
+          });
+        }
+
+        // === Auth State: Login/Logout Navbar Toggle ===
+        const token = localStorage.getItem("token");
+
+        const loginDesktop = document.getElementById("login-link-desktop");
+        const logoutDesktop = document.getElementById("logout-link-desktop");
+        const loginMobile = document.getElementById("login-link-mobile");
+        const logoutMobile = document.getElementById("logout-link-mobile");
+
+        if (token) {
+          if (loginDesktop) loginDesktop.classList.add("hidden");
+          if (logoutDesktop) logoutDesktop.classList.remove("hidden");
+          if (loginMobile) loginMobile.classList.add("hidden");
+          if (logoutMobile) logoutMobile.classList.remove("hidden");
+        } else {
+          if (logoutDesktop) logoutDesktop.classList.add("hidden");
+          if (loginDesktop) loginDesktop.classList.remove("hidden");
+          if (logoutMobile) logoutMobile.classList.add("hidden");
+          if (loginMobile) loginMobile.classList.remove("hidden");
+        }
+
+        // === Logout Handler ===
+        const logoutHandler = () => {
+          localStorage.removeItem("token");
+          window.location.href = "/login"; // Redirect after logout
+        };
+
+        if (logoutDesktop) {
+          logoutDesktop.addEventListener("click", function (e) {
+            e.preventDefault();
+            logoutHandler();
+          });
+        }
+
+        if (logoutMobile) {
+          logoutMobile.addEventListener("click", function (e) {
+            e.preventDefault();
+            logoutHandler();
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

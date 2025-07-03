@@ -1,0 +1,63 @@
+{% extends "base.html" %} {% block title %}Dashboard | Local Alpha OS{% endblock
+%} {% block content %}
+
+<section class="dashboard-header">
+  <h1>📊 Dashboard Overview</h1>
+  <p id="dashboard-message">Loading your business data...</p>
+</section>
+
+<section class="dashboard-grid">
+  <div class="dash-card">
+    <h3>Revenue</h3>
+    <p id="revenue-amount">$0.00</p>
+  </div>
+  <div class="dash-card">
+    <h3>Expenses</h3>
+    <p id="expenses-amount">$0.00</p>
+  </div>
+  <div class="dash-card">
+    <h3>Profit</h3>
+    <p id="profit-amount">$0.00</p>
+  </div>
+</section>
+
+<section class="chart-section">
+  <canvas id="finance-chart" width="400" height="200"></canvas>
+</section>
+
+<section class="transaction-cta">
+  <button id="add-transaction-btn" class="btn primary">
+    ➕ Add Transaction
+  </button>
+</section>
+
+<!-- Modal for Adding Transaction -->
+<div id="transaction-modal" class="modal hidden">
+  <div class="modal-content">
+    <span id="close-modal" class="close">&times;</span>
+    <h2>Add Transaction</h2>
+    <form id="transaction-form">
+      <label>Type:</label>
+      <select name="type" required>
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+      <label>Amount:</label>
+      <input type="number" name="amount" step="0.01" required />
+      <label>Category:</label>
+      <input type="text" name="category" required />
+      <label>Note:</label>
+      <input type="text" name="note" />
+      <button type="submit" class="btn primary">Save</button>
+    </form>
+  </div>
+</div>
+
+<!-- Feedback Message (hidden by default) -->
+<div id="feedback" class="feedback-message hidden"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}

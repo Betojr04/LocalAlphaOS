@@ -1,0 +1,69 @@
+{% extends "base.html" %} {% block title %}Login | Local Alpha OS{% endblock %}
+{% block content %}
+<section class="auth-form" id="login-form">
+  <h2>Welcome Back 👋</h2>
+  <form id="login-form">
+    <label>Email</label>
+    <input type="email" name="email" placeholder="you@example.com" required />
+
+    <label>Password</label>
+    <input type="password" name="password" placeholder="••••••••" required />
+    <p id="auth-message" class="auth-message"></p>
+
+    <button type="submit" class="btn primary">Log In</button>
+    <p class="auth-switch">
+      Don't have an account? <a href="/register">Create one</a>
+    </p>
+  </form>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("login-form");
+      const message = document.getElementById("auth-message");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document
+          .querySelector("input[name='email']")
+          .value.trim();
+        const password = document
+          .querySelector("input[name='password']")
+          .value.trim();
+
+        if (!email || !password) {
+          message.textContent = "Please enter both email and password.";
+          message.classList.add("error");
+          return;
+        }
+
+        try {
+          const res = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok || !data.access_token) {
+            message.textContent = data.error || "Login failed.";
+            message.classList.add("error");
+          } else {
+            localStorage.setItem("token", data.access_token);
+            message.textContent = "✅ Login successful! Redirecting...";
+            message.classList.add("success");
+
+            setTimeout(() => {
+              window.location.href = "/dashboard";
+            }, 1000);
+          }
+        } catch (err) {
+          console.error("🔥 Login error:", err);
+          message.textContent = "Server error. Please try again.";
+          message.classList.add("error");
+        }
+      });
+    });
+  </script>
+</section>
+{% endblock %}
